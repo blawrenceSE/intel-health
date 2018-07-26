@@ -37,13 +37,15 @@ def monitored_pull():
             ],
             "footer": "<!date^" + str(int(time.time())) + "^{date} at {time}|Error reading date>"
         }
-        #send_slack_message(slack_data)
+        send_slack_message(slack_data)
        
 
 def send_slack_message(message):
     r4 = requests.post(slack_url, json=message)
     if r4.status_code != 200:
         print "Error sending message! " + r4.text
+    else:
+        print "Message sent successfully"
 
 monitored_pull()
 

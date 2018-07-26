@@ -5,7 +5,7 @@ Checks an org's monitored Intel apps, then notifies via Slack with URL's of any 
 Current slack webhook goes to SE test Slack team.
 
 `docker build .`
-`docker run -e PYTHONUNBUFFERED=0 --name <client or name>`
+`docker run -d -e PYTHONUNBUFFERED=0 --name <client or name>`
 
 Build and run the Docker container. Once running, you must set and export environment variables:
 

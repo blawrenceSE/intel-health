@@ -10,5 +10,5 @@ RUN pip install --upgrade pip requests
 RUN git clone https://github.com/blawrencens/intel-health
 
 RUN crontab -l | { cat; echo "*    *       *       *       *       /intel-health/run.sh"; } | crontab -
-
+RUN chmod 777 /intel-health/run.sh
 CMD tail -f /dev/null
