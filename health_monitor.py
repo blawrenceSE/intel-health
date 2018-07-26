@@ -1,8 +1,10 @@
-import requests, json, time, os
+import requests, json, time, os, sys
 from day_diff import day_check
 
 monitored_url = "https://intel-api.nowsecure.com/app/monitor?limit=1000000"
 api_token = os.environ['API_TOKEN']
+team = os.environ['TEAM']
+day_limit = 2
 header = {"Authorization": "Bearer " + api_token}
 intel_url = "https://intel.nowsecure.com/app/"
 slack_url = os.environ['SLACK_WEBHOOK']
@@ -16,15 +18,15 @@ def monitored_pull():
     #problems = []
     problems = ""
     for app in monitored_apps:
-        if app['latest_published_version'] != app['latest_report_release_version'] and day_check(app['latest_release_date']) > 2:
+        if app['latest_published_version'] != app['latest_report_release_version'] and day_check(app['latest_release_date']) > day_limit:
             app_url = intel_url + app['platform_id'] + "/" + app['package_name'] + "/"
-            print app_url
+            sys.stdout.write('Found problem app: ' + app_url + '\n')
             problems = problems + app_url + "\n"
         x+=1
     if problems:
         slack_data = {
             "channel": slack_channel,
-            "text":"Attention AMEX Team: There are apps in Intel which have new versions that have not gotten a new assessment for over 48 hours.",
+            "text":"Attention " + team + " Team: There are apps in Intel which have new versions that have not gotten a new assessment for over 48 hours.",
             "attachments": [
                 {
                     "fallback": "Required plain-text summary of the attachment.",
@@ -43,6 +45,5 @@ def send_slack_message(message):
     if r4.status_code != 200:
         print "Error sending message! " + r4.text
 
-while True:
-    monitored_pull()
+monitored_pull()
 
