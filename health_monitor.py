@@ -2,10 +2,10 @@ import requests, json, time, os
 from day_diff import day_check
 
 monitored_url = "https://intel-api.nowsecure.com/app/monitor?limit=1000000"
-api_token = os.environ("API_TOKEN")
+api_token = os.environ['API_TOKEN']
 header = {"Authorization": "Bearer " + api_token}
 intel_url = "https://intel.nowsecure.com/app/"
-slack_url = os.environ("SLACK_WEBHOOK")
+slack_url = os.environ['SLACK_WEBHOOK']
 slack_channel = "#general"
 
 
@@ -18,6 +18,7 @@ def monitored_pull():
     for app in monitored_apps:
         if app['latest_published_version'] != app['latest_report_release_version'] and day_check(app['latest_release_date']) > 2:
             app_url = intel_url + app['platform_id'] + "/" + app['package_name'] + "/"
+            print app_url
             problems = problems + app_url + "\n"
         x+=1
     if problems:
@@ -35,7 +36,7 @@ def monitored_pull():
             "footer": "<!date^" + str(int(time.time())) + "^{date} at {time}|Error reading date>"
         }
         #send_slack_message(slack_data)
-        print slack_data['text']
+       
 
 def send_slack_message(message):
     r4 = requests.post(slack_url, json=message)
@@ -44,4 +45,4 @@ def send_slack_message(message):
 
 while True:
     monitored_pull()
-    
+
