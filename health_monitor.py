@@ -47,5 +47,8 @@ def send_slack_message(message):
     else:
         print "Message sent successfully"
 
-monitored_pull()
+
+while True:
+    monitored_pull()
+    sleep(60)
 
