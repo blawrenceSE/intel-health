@@ -13,4 +13,4 @@ RUN crontab -l | { cat; echo "*    *       *       *       *       /intel-health
 
 CMD tail -f /dev/null
 
-RUN python /intel-health/health_monitor.py
+#RUN python /intel-health/health_monitor.py
