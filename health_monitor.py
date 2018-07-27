@@ -51,5 +51,5 @@ def send_slack_message(message):
 
 while True:
     monitored_pull()
-    sleep(60)
+    sleep(86400*2)
 

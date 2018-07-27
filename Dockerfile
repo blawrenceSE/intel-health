@@ -11,4 +11,5 @@ RUN git clone https://github.com/blawrencens/intel-health
 
 RUN crontab -l | { cat; echo "*    *       *       *       *       /intel-health/run.sh"; } | crontab -
 
-CMD tail -f /dev/null
+#CMD tail -f /dev/null
+CMD python health_monitor.py
