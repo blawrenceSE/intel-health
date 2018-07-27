@@ -1,5 +1,6 @@
 import requests, json, time, os, sys
 from day_diff import day_check
+from time import sleep
 
 monitored_url = "https://intel-api.nowsecure.com/app/monitor?limit=1000000"
 api_token = os.environ['API_TOKEN']
