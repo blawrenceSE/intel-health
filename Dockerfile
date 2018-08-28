@@ -2,11 +2,13 @@ FROM alpine
 
 LABEL maintainer blawrence
 
-RUN apk add --update python py-pip git bash
+RUN apk add --update python py-pip bash
 
 RUN pip install --upgrade pip requests
+RUN pip install sendgrid
 
-RUN git clone https://github.com/blawrencens/intel-health
+ADD health_monitor.py /
+ADD day_diff.py /
 
-CMD tail -f /dev/null
+CMD python health_monitor.py
 
