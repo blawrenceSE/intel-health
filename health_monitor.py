@@ -85,7 +85,7 @@ def monitored_pull():
        
 def send_support_ticket(app_package, app_platform, app_version, app_title):
     sg = sendgrid.SendGridAPIClient(apikey=email_token)
-    from_email = Email("noreply@nowsecure.com")
+    from_email = Email("intel-health@nowsecure.com")
     to_email = Email(support_email)
     subject = "Intel App in need of attention for client " + team
     content = Content("text/plain", "Hello Support team, the app " + app_title + " (" + app_package + "), version: " + str(app_version) + "for " + app_platform + " is being monitored by " + team + " and has released a new version over two weeks ago that still does not have a complete report. This is an automated ticket for us to look into and take appropriate action for that app/client. Please note that repeat analysis has likely been requested for this app multiple times already. Thanks!")
