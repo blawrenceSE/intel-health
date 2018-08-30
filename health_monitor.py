@@ -17,7 +17,7 @@ slack_channel = os.environ['SLACK_CHANNEL']
 
 day_limit = 2
 ticket_limit = 14
-support_email = "blawrence+support@nowsecure.com"
+support_email = "support@nowsecure.com"
 header = {"Authorization": "Bearer " + api_token}
 request_header = {"Authorization": "Bearer " + request_token}
 
@@ -91,7 +91,7 @@ def send_support_ticket(app_package, app_platform, app_version, app_title):
     content = Content("text/plain", "Hello Support team, the app " + app_title + " (" + app_package + "), version: " + str(app_version) + "for " + app_platform + " is being monitored by " + team + " and has released a new version over two weeks ago that still does not have a complete report. This is an automated ticket for us to look into and take appropriate action for that app/client. Please note that repeat analysis has likely been requested for this app multiple times already. Thanks!")
     mail = Mail(from_email, subject, to_email, content)
     response = sg.client.mail.send.post(request_body=mail.get())
-    print("Response to sending email regarding + " + app_package + " was " + response.status_code)
+    print("Response to sending email regarding + " + app_package + " was " + str(response.status_code))
     #print(response.body)
     
 
