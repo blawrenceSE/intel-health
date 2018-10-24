@@ -26,17 +26,21 @@ request_header = {"Authorization": "Bearer " + request_token}
 
 
 def monitored_pull():
+    #Get monitored apps for an account
     r = requests.get(monitored_url, headers=header)
     monitored_apps = json.loads(r.text)
     x = 0
-    #problems = []
     problems = ""
+    #iterate through each app object
     for app in monitored_apps:
+        #if there is not an up to date report and it has been at least <day_limit> days since that release, we need to do things
         if app['latest_published_version'] != app['latest_report_release_version'] and day_check(app['latest_release_date']) > day_limit:
             app_url = intel_url + app['platform_id'] + "/" + app['package_name'] + "/"
             sys.stdout.write('Found problem app: ' + app_url + '\n')
             problems = problems + app_url + "\n"
+            #asks Intel to retry - will become deprecated when Intel does this automatically
             request_analysis = requests.post(request_url, headers=request_header, data={"name":app['package_name'], "platform": app['platform_id']} )
+            #error message to slack if the api call to request fails
             if request_analysis.status_code > 201:
                 send_slack_message({
                     "channel": slack_channel,
@@ -47,8 +51,10 @@ def monitored_pull():
                         }
                     ],
                 })
+            #also, if its more than 2 weeks old, we need to make a ticket in Zendesk
             if day_check(app['latest_release_date']) > ticket_limit:
                 send_ticket = True
+                #tracks previously created tickets to make sure we dont duplicate
                 if os.path.isfile('./requests.json'):
                     with open("./requests.json", "r") as json_file:  
                         json_data = json.load(json_file)
@@ -59,14 +65,17 @@ def monitored_pull():
                     if app_archive['package_name'] == app['package_name'] and app_archive["latest_published_version"] == app["latest_published_version"] and app['platform_id'] == app_archive['platform_id']:
                         send_ticket = False
                         break
+                #if its not a duplicate, etc, send a ticket via email
                 if send_ticket:
                     send_support_ticket(app['package_name'], app["platform_id"], app["latest_published_version"],app['title'])
                     json_data.append({"package_name": app["package_name"], "platform_id": app["platform_id"], "latest_published_version": app["latest_published_version"]})
+                    #add it to the list of submitted tickets 
                     with open("./requests.json","w+") as json_file:
                             json.dump(json_data,json_file)
                        
 
         x+=1
+    #if we didnt have any problem apps, no need to do anything. otherwise, lets send a slack notification
     if problems:
         slack_data = {
             "channel": slack_channel,
@@ -82,7 +91,8 @@ def monitored_pull():
             "footer": "<!date^" + str(int(time.time())) + "^{date} at {time}|Error reading date>"
         }
         send_slack_message(slack_data)
-       
+
+#sends a support ticket via api driven e-mail
 def send_support_ticket(app_package, app_platform, app_version, app_title):
     sg = sendgrid.SendGridAPIClient(apikey=email_token)
     from_email = Email("intel-health@nowsecure.com")
@@ -94,7 +104,7 @@ def send_support_ticket(app_package, app_platform, app_version, app_title):
     print("Response to sending email regarding + " + app_package + " was " + str(response.status_code))
     #print(response.body)
     
-
+#sends a json payload to defined slack webhook
 def send_slack_message(message):
     r4 = requests.post(slack_url, json=message)
     if r4.status_code != 200:
@@ -102,8 +112,9 @@ def send_slack_message(message):
     else:
         print "Message sent successfully"
 
-
+#this is where things actually run
 while True:
     monitored_pull()
+    #this runs every 2 days but could be any cadence desired.
     sleep(86400*2)
 
