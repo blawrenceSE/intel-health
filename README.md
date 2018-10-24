@@ -7,9 +7,9 @@
 
 Current DOCKERFILE has bash but probably does not need to.
 
-API_TOKEN - the token for the account you are monitoring
-TEAM - the account team that needs to be notified
-SLACK_WEBHOOK - the slack url to push messages
-REQUEST_TOKEN - internal token for requesting fresh analysis
-EMAIL_KEY - Key to send e-mails
-SLACK_CHANNEL - where to send messages
+- API_TOKEN - the token for the account you are monitoring
+- TEAM - the account team that needs to be notified
+- SLACK_WEBHOOK - the slack url to push messages
+- REQUEST_TOKEN - internal token for requesting fresh analysis
+- EMAIL_KEY - Key to send e-mails
+- SLACK_CHANNEL - where to send messages
